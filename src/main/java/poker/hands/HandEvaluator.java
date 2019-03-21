@@ -28,13 +28,13 @@ public class HandEvaluator {
         add(hand -> getStraightFlush(hand));
     }};
 
-    public List<Card> getHighCard(ArrayList<Card> hand) {
+    public List<Card> getHighCard(List<Card> hand) {
         return new ArrayList<Card>() {{
             add(hand.stream().max(Comparator.comparing(Card::getValue)).orElse(null));
         }};
     }
 
-    public List<Card> getPair(ArrayList<Card> hand) {
+    public List<Card> getPair(List<Card> hand) {
         List<Card> duplicates = getDuplicateCards(hand, 2);
         if (duplicates.size() == 2) {
             return duplicates;
@@ -121,7 +121,7 @@ public class HandEvaluator {
         return hand;
     }
 
-    public List<Card> evaluateHands(ArrayList<ArrayList<Card>> hands) {
+    public List<Card> evaluateHands(List<ArrayList<Card>> hands) {
         List<Integer> rankList = new ArrayList<>(Collections.nCopies(hands.size(), 0));
         List<Integer> tieBreakerList = new ArrayList<>(Collections.nCopies(hands.size(), 0));
 
@@ -142,7 +142,7 @@ public class HandEvaluator {
         return hands.get(rankList.indexOf(Collections.max(rankList)));
     }
 
-    private List<Card> getDuplicateCards(ArrayList<Card> hand, int i) {
+    private List<Card> getDuplicateCards(List<Card> hand, int i) {
         List<Integer> valueList = hand.stream().map(Card::getValue).collect(Collectors.toList());
 
         return hand.stream().filter(card -> Collections.frequency(valueList, card.getValue()) == i)
