@@ -15,8 +15,8 @@ public class HandEvaluator {
         List<Hand> maxHands = hands.stream().filter(hand -> hand.getHandValue() == maxValue).collect(Collectors.toList());
 
         if(maxHands.size() > 1) {
-            int maxHighCardValue = Collections.max(maxHands.stream().map(Hand::getHighCardValue).collect(Collectors.toList()));
-            return maxHands.stream().filter(hand -> hand.getHighCardValue() == maxHighCardValue).collect(Collectors.toList());
+            int maxHighCardValue = Collections.max(maxHands.stream().map(Hand::getHandHighCardValue).collect(Collectors.toList()));
+            return maxHands.stream().filter(hand -> hand.getHandHighCardValue() == maxHighCardValue).collect(Collectors.toList());
         }
 
         return maxHands;

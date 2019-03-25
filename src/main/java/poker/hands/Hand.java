@@ -4,8 +4,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Hand {
-    private List<Card> cardList;
+
     private static final int HAND_SIZE = 5;
+
+    private List<Card> cardList;
+
 
     public Hand(List<Card> cards) {
         cardList = cards;
@@ -28,54 +31,49 @@ public class Hand {
     }};
 
     public int getHandValue() {
-        if(invalidHandSize()) {
+        if (invalidHandSize()) {
             return 0;
         }
 
         return Collections.max(classifyActions.stream().map(HandClassifier::classify).collect(Collectors.toList()));
     }
 
-    public int getHighCardValue() {
-        return Collections.max(cardList.stream().map(Card::getValue).collect(Collectors.toList()));
+    public int getHandHighCardValue() {
+        return getHighestCardValue(cardList);
     }
 
     private int hasHighCard() {
-        int highValue = Collections.max(cardList.stream().map(Card::getValue).collect(Collectors.toList()));
-
-        return HandValue.HighCard.getValue() + highValue;
+        return HandValue.HighCard.getValue() + getHighestCardValue(cardList);
     }
 
     private int hasPair() {
         List<Card> duplicates = getDuplicateCards(cardList, 2);
 
-        if(duplicates.size() != 2) {
+        if (duplicates.size() != 2) {
             return 0;
         }
 
-        int highValue = duplicates.stream().max(Comparator.comparing(Card::getValue)).orElse(null).getValue();
-        return HandValue.Pair.getValue() + highValue;
+        return HandValue.Pair.getValue() + getHighestCardValue(duplicates);
     }
 
     private int hasTwoPair() {
         List<Card> duplicates = getDuplicateCards(cardList, 2);
 
-        if(duplicates.size() != 4) {
+        if (duplicates.size() != 4) {
             return 0;
         }
 
-        int highValue = Collections.max(duplicates.stream().map(Card::getValue).collect(Collectors.toList()));
-        return HandValue.TwoPair.getValue() + highValue;
+        return HandValue.TwoPair.getValue() + getHighestCardValue(duplicates);
     }
 
     private int hasThreeOfAKind() {
         List<Card> duplicates = getDuplicateCards(cardList, 3);
 
-        if(duplicates.size() != 3) {
+        if (duplicates.size() != 3) {
             return 0;
         }
 
-        int highValue = Collections.max(duplicates.stream().map(Card::getValue).collect(Collectors.toList()));
-        return HandValue.ThreeOfAKind.getValue() + highValue;
+        return HandValue.ThreeOfAKind.getValue() + getHighestCardValue(duplicates);
     }
 
     private int hasStraight() {
@@ -90,9 +88,7 @@ public class Hand {
             expectedValue++;
         }
 
-        int highValue = Collections.max(cardList.stream().map(Card::getValue).collect(Collectors.toList()));
-
-        return HandValue.Straight.getValue() + highValue;
+        return HandValue.Straight.getValue() + getHighestCardValue(cardList);
     }
 
     private int hasFlush() {
@@ -102,9 +98,7 @@ public class Hand {
             return 0;
         }
 
-        int highValue = Collections.max(cardList.stream().map(Card::getValue).collect(Collectors.toList()));
-
-        return HandValue.Flush.getValue() + highValue;
+        return HandValue.Flush.getValue() + getHighestCardValue(cardList);
     }
 
     private int hasFullHouse() {
@@ -116,20 +110,17 @@ public class Hand {
             return 0;
         }
 
-        int highValue = fullHouse.stream().max(Comparator.comparing(Card::getValue)).orElse(null).getValue();
-
-        return HandValue.FullHouse.getValue() + highValue;
+        return HandValue.FullHouse.getValue() + getHighestCardValue(cardList);
     }
 
     private int hasFourOfAKind() {
         List<Card> duplicates = getDuplicateCards(cardList, 4);
 
-        if(duplicates.size() != 4) {
+        if (duplicates.size() != 4) {
             return 0;
         }
 
-        int highValue = Collections.max(duplicates.stream().map(Card::getValue).collect(Collectors.toList()));
-        return HandValue.FourOfAKind.getValue() + highValue;
+        return HandValue.FourOfAKind.getValue() + getHighestCardValue(duplicates);
     }
 
     private int hasStraightFlush() {
@@ -137,9 +128,7 @@ public class Hand {
             return 0;
         }
 
-        int highValue = Collections.max(cardList.stream().map(Card::getValue).collect(Collectors.toList()));
-
-        return HandValue.StraightFlush.getValue() + highValue;
+        return HandValue.StraightFlush.getValue() + getHighestCardValue(cardList);
     }
 
     private List<Card> getDuplicateCards(List<Card> hand, int i) {
@@ -147,6 +136,10 @@ public class Hand {
 
         return hand.stream().filter(card -> Collections.frequency(valueList, card.getValue()) == i)
                 .collect(Collectors.toList());
+    }
+
+    private int getHighestCardValue(List<Card> cards) {
+        return Collections.max(cards.stream().map(Card::getValue).collect(Collectors.toList()));
     }
 
     private boolean invalidHandSize() {
